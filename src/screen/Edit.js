@@ -20,16 +20,16 @@ import {isEmpty} from 'lodash';
 
 const _hScale = hScale(1, 1);
 
-export default class ModalAdd extends Component {
+export default class Edit extends Component {
   constructor(props) {
+    const {item} = props;
+    console.log('props', props);
     super(props);
     this.state = {
-      money: '',
-      type: 0,
-      description: '',
-      date: null,
-      valueStatus: '',
-      valueDateTime: new Date(),
+      money: item.money.toString(),
+      description: item.description,
+      valueStatus: +item.type,
+      valueDateTime: moment(item.date),
       showModal: false,
     };
   }
@@ -62,28 +62,44 @@ export default class ModalAdd extends Component {
     } else if (description === '') {
       setTimeout(() => Alert.alert('', 'Vui lòng nhập mô tả'), 500);
     } else {
-      const body = [
-        null,
-        valueStatus,
-        parseInt(money),
-        description,
-        moment(valueDateTime).format('YYYY-MM-DD'),
-        1,
-      ];
+      const body = {
+        data_id: this.props.item.id,
+        data: [
+          this.props.item.id,
+          valueStatus,
+          parseInt(money),
+          description,
+          moment(valueDateTime).format('YYYY-MM-DD'),
+          1,
+        ],
+      };
       console.log('body', body);
       axios
-        .post(`${apiUrl}/mymoney/add`, body)
+        .put(`${apiUrl}/mymoney`, body)
         .then(res => {
           console.log('res', res.data);
           if (res.data.error === false) {
-            setTimeout(() => Alert.alert('', 'Thêm giao dịch thành công'), 500);
+            setTimeout(
+              () => Alert.alert('', 'Cập nhật giao dịch thành công'),
+              500,
+            );
             Keyboard.dismiss();
-            this.setState({
-              money: '',
-              valueStatus: '',
-              description: '',
-              valueDateTime: new Date(),
+            Navigation.pop(this.props.componentId);
+            this.props.getData();
+            this.props.onGetEditData({
+              date: valueDateTime,
+              description,
+              id: this.props.item.id,
+              money,
+              type: valueStatus,
+              user_id: 1,
             });
+            // this.setState({
+            //   money: '',
+            //   valueStatus: '',
+            //   description: '',
+            //   valueDateTime: new Date(),
+            // });
             // this.gotoScreen('navigation.SoGiaoDich');
           }
         })
@@ -116,15 +132,8 @@ export default class ModalAdd extends Component {
   };
 
   render() {
-    const {
-      money,
-      type,
-      description,
-      date,
-      valueStatus,
-      showModal,
-      valueDateTime,
-    } = this.state;
+    const {money, description, valueStatus, showModal, valueDateTime} =
+      this.state;
     return (
       <View style={{flex: 1}}>
         <TextInput

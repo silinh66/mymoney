@@ -66,7 +66,7 @@ export default class ModalBottomPopup extends React.Component {
             style={{flex: 1}}
             onPress={() => this._handleDismiss()}
           />
-          <Animated.View style={[styles.container, {top}]}>
+          <Animated.View style={[styles.container]}>
             <View
               style={{
                 width: '100%',

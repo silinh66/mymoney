@@ -30,25 +30,19 @@ export default class SoGiaoDich extends Component {
     super(props);
     this.state = {
       pageCur: 19,
+      isFirst: true,
     };
     this.viewPager = React.createRef();
     this.srollview = React.createRef();
   }
 
   componentDidMount() {
-    this.setState({pageCur: 19});
+    this.onPress(18);
   }
 
   onPress = index => {
     this.viewPager.current.setPage(index);
-    this.setState({pageCur: parseInt(index) + 1});
-    // if (index === 0) {
-    //   this.setState({pageCur: 1});
-    // } else if (index === 1) {
-    //   this.setState({pageCur: 2});
-    // } else {
-    //   this.setState({pageCur: 3});
-    // }
+    this.setState({pageCur: index + 1});
   };
 
   getItemLayout = (data, index) => ({
@@ -70,9 +64,6 @@ export default class SoGiaoDich extends Component {
           initialScrollIndex={14}
           keyExtractor={item => item.id}
           renderItem={({item, index}) => {
-            // console.log('item.id', item.id);
-            // console.log(' this.state.pageCur', this.state.pageCur);
-            // console.log('item.id', this.state.pageCur === item.id);
             return (
               <TouchableOpacity
                 key={index}
@@ -108,26 +99,29 @@ export default class SoGiaoDich extends Component {
         <ViewPager
           scrollEnabled={false}
           style={{flex: 1}}
-          initialPage={'19'}
+          initialPage={19}
           ref={this.viewPager}
-          //   onPageSelected={e => {
-          //     this.setState({pageCur: e.nativeEvent.position + 1});
-          //   }}
-        >
+          onPageSelected={e => {
+            // this.setState({pageCur: e.nativeEvent.position + 1});
+            if (this.state.isFirst) {
+              // this.onPress(18);
+              this.viewPager.current.setPageWithoutAnimation(18);
+              this.setState({isFirst: false});
+            }
+          }}>
           {map(listViewPagers, (item, index) => {
-            // console.log('item', item);
             return (
-              <ScrollView key={(index + 1).toString()}>
-                <SoGiaoDichComponent key={index} date={item.value} />
+              <ScrollView
+                key={(index + 1).toString()}
+                style={{backgroundColor: '#003f5c'}}>
+                <SoGiaoDichComponent
+                  componentId={this.props.componentId}
+                  key={index}
+                  date={item.value}
+                />
               </ScrollView>
             );
           })}
-          {/* <View key="1">
-            <SoGiaoDichComponent />
-          </View>
-          <View key="2">
-            <SoGiaoDichComponent />
-          </View> */}
         </ViewPager>
       </SafeAreaView>
     );

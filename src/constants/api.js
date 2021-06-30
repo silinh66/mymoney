@@ -12,4 +12,4 @@ var isProduct = false;
 //cPanel
 export const apiUrl = isProduct
   ? 'https://tentickers.net'
-  : 'http://192.168.1.228:3000';
+  : 'http://192.168.1.10:3000';
